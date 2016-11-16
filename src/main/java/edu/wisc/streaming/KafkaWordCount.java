@@ -46,11 +46,11 @@ public class KafkaWordCount {
 	private static final Pattern SPACE = Pattern.compile(" ");
 
 	public static void main(String[] args) throws Exception {
-		if (args.length < 3) {
+		if (args.length < 4) {
 			System.err
 					.println("Usage: JavaDirectKafkaWordCount <brokers> <topics>\n"
 							+ "  <brokers> is a list of one or more Kafka brokers\n"
-							+ "  <topics> is a list of one or more kafka topics to consume from\n <max_rate>\n");
+							+ "  <topics> is a list of one or more kafka topics to consume from\n <max_rate>\n <batch_duration_in_ms> \n");
 			System.exit(1);
 		}
 		
@@ -59,13 +59,14 @@ public class KafkaWordCount {
 		String brokers = args[0];
 		String topics = args[1];
 		String maxRate = ((Long)Long.parseLong(args[2])).toString();
+		long batchDuration = Long.parseLong(args[3]);
 
 		// Create context with a 2 seconds batch interval
 		SparkConf sparkConf = new SparkConf()
 		    .setAppName("JavaDirectKafkaWordCount").set("spark.streaming.kafka.maxRatePerPartition", maxRate);
 		
 		JavaStreamingContext jssc = new JavaStreamingContext(sparkConf,
-				Durations.seconds(1));
+				Durations.milliseconds(batchDuration));
 		
 		jssc.checkpoint("/tmp/services/checkpoint");
 
