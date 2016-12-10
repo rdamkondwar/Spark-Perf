@@ -46,7 +46,7 @@ public class KafkaWordCount {
 	private static final Pattern SPACE = Pattern.compile(" ");
 
 	public static void main(String[] args) throws Exception {
-		if (args.length < 4) {
+		if (args.length < 5) {
 			System.err
 					.println("Usage: JavaDirectKafkaWordCount <brokers> <topics>\n"
 							+ "  <brokers> is a list of one or more Kafka brokers\n"
@@ -60,6 +60,7 @@ public class KafkaWordCount {
 		String topics = args[1];
 		String maxRate = ((Long)Long.parseLong(args[2])).toString();
 		long batchDuration = Long.parseLong(args[3]);
+		Integer partitions = Integer.parseInt(args[4]);
 
 		// Create context with a 2 seconds batch interval
 		SparkConf sparkConf = new SparkConf()
@@ -82,14 +83,15 @@ public class KafkaWordCount {
 //		Map<TopicAndPartition,Long> fromOffsets = new HashMap<>();
 //		fromOffsets.put(new TopicAndPartition(topics, 1), )
 //		
-
-		
 		// Create direct kafka stream with brokers and topics
 		JavaPairInputDStream<String, String> messages = KafkaUtils
 				.createDirectStream(jssc, String.class, String.class,
 						StringDecoder.class, StringDecoder.class, kafkaParams,
 						topicsSet);
 		
+		if (null != partitions) {
+			messages.repartition(partitions);
+		}
 		//messages.window(Durations.milliseconds(100), Durations.milliseconds(300));
 
 		// Get the lines, split them into words, count the words and print
