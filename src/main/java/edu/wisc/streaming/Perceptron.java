@@ -2,12 +2,14 @@ package edu.wisc.streaming;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-class Stats {
-    private int correct = 0, wrong = 0, total = 0;
+class Stats implements Serializable {
+	private static final long serialVersionUID = -3612104666126306634L;
+	private int correct = 0, wrong = 0, total = 0;
     private double accuracy; 
     
     public Stats(int c, int w) {
@@ -22,8 +24,10 @@ class Stats {
     }
 }
 
-public class Perceptron {
-    private int numOfInputs;
+public class Perceptron implements Serializable {
+	
+	private static final long serialVersionUID = 5146134741283791340L;
+	private int numOfInputs;
     private List<Double> weights;
     private int bais_input = -1;
     private Double threshold_wt = 0.0d;
@@ -134,9 +138,11 @@ public class Perceptron {
 // The new method PrintFeatures() can be used to
 // display the contents of the example.
 // The items in the ArrayList are the feature values.
-class Example extends ArrayList<Integer>
+class Example extends ArrayList<Integer> implements Cloneable, Serializable
 {
-    // The name of this example.
+	private static final long serialVersionUID = 8368342836702700119L;
+
+	// The name of this example.
     private String name;
 
     // The output label of this example.
@@ -148,6 +154,15 @@ class Example extends ArrayList<Integer>
     // Constructor which stores the dataset which the example belongs to.
     public Example(ListOfExamples parent) {
         this.parent = parent;
+    }
+    
+    public void printExample() {
+    	System.out.print(name + " " + label);
+        for (int i = 0; i < parent.getNumberOfFeatures(); i++)
+            {
+                System.out.print(" " + this.get(i));
+            }
+        System.out.print("\n");
     }
 
     // Print out this example in human-readable form.
@@ -183,6 +198,25 @@ class Example extends ArrayList<Integer>
     public void setLabel(String label) {
         this.label = label;
     }
+    
+    public Example clone() {
+    	Example e = new Example(this.parent);
+    	e.label = this.label;
+    	e.name = this.name;
+    	for(Integer v : this) {
+    		e.add(v);
+    	}
+    	return e;
+    }
+    
+    public String toString() {
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(name).append(" ").append(label);
+        for (int i = 0; i < parent.getNumberOfFeatures(); i++) {
+        	sb.append(" ").append(this.get(i));
+    	}
+        return sb.toString();
+    }
 }
 /* This class holds all of our examples from one dataset
    (train OR test, not BOTH).  It extends the ArrayList class.
@@ -191,9 +225,11 @@ class Example extends ArrayList<Integer>
    an ArrayList of examples. Also, there is one ListOfExamples for the
    TRAINING SET and one for the TESTING SET.
 */
-class ListOfExamples extends ArrayList<Example>
+class ListOfExamples extends ArrayList<Example> implements Cloneable, Serializable
 {
-    // The name of the dataset.
+	private static final long serialVersionUID = -7863298034390017257L;
+
+	// The name of the dataset.
     private String nameOfDataset = "";
 
     // The number of features per example in the dataset.
@@ -207,6 +243,17 @@ class ListOfExamples extends ArrayList<Example>
 
     // The number of examples in the dataset.
     private int numExamples = -1;
+    
+    public ListOfExamples clone() {
+    	ListOfExamples l = new ListOfExamples();
+    	l.numFeatures = this.numFeatures;
+    	l.features = this.features;
+    	l.outputLabel = this.outputLabel;
+    	for(Example e : this) {
+    		l.add(e.clone());
+    	}
+    	return l;
+    }
 
     public ListOfExamples() {}
     
@@ -441,8 +488,9 @@ class ListOfExamples extends ArrayList<Example>
 /**
  * Represents a single binary feature with two String values.
  */
-class BinaryFeature {
-    private String name;
+class BinaryFeature implements Serializable {
+	private static final long serialVersionUID = -7380255622825720728L;
+	private String name;
     private String firstValue;
     private String secondValue;
 
@@ -475,13 +523,13 @@ class BinaryFeature {
     }
 }
 
-class Utilities
-{
-    // This method can be used to wait until you're ready to proceed.
-    public static void waitHere(String msg)
-    {
-        System.out.print("\n" + msg);
-        try { System.in.read(); }
-        catch(Exception e) {} // Ignore any errors while reading.
-    }
-}
+//class Utilities 
+//{
+//    // This method can be used to wait until you're ready to proceed.
+//    public static void waitHere(String msg)
+//    {
+//        System.out.print("\n" + msg);
+//        try { System.in.read(); }
+//        catch(Exception e) {} // Ignore any errors while reading.
+//    }
+//}
