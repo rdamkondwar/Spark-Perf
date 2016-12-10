@@ -113,28 +113,30 @@ public class RunPerceptron {
 					public Tuple2<Example, Integer> call(String s) {
 						Example e = ListOfExamples.parseExampleFromString(s, testExamplesSet);
 						int output = perceptron.runExample(e);
+						e.predictedOutput = output;
 						return new Tuple2<>(e, output);
 					}
 		});
 			
-		Function3<Example, Optional<Integer>, State<Integer>, Tuple2<Example, Integer>> mappingFunc = new Function3<Example, Optional<Integer>, State<Integer>, Tuple2<Example, Integer>>() {
-			private static final long serialVersionUID = -4724201592652717034L;
-
-			@Override
-			public Tuple2<Example, Integer> call(Example word, Optional<Integer> one, State<Integer> state) {
-				int sum = one.orElse(0) + (state.exists() ? state.get() : 0);
-				Tuple2<Example, Integer> output = new Tuple2<>(word, sum);
-				state.update(sum);
-				return output;
-			}
-		};
-
-		JavaMapWithStateDStream<Example, Integer, Integer, Tuple2<Example, Integer>> stateDstream =
-		        predictions.mapWithState(StateSpec.function(mappingFunc));
+//		Function3<Example, Optional<Integer>, State<Integer>, Tuple2<Example, Integer>> mappingFunc = new Function3<Example, Optional<Integer>, State<Integer>, Tuple2<Example, Integer>>() {
+//			private static final long serialVersionUID = -4724201592652717034L;
+//
+//			@Override
+//			public Tuple2<Example, Integer> call(Example word, Optional<Integer> one, State<Integer> state) {
+//				//int sum = one.orElse(0) + (state.exists() ? state.get() : 0);
+//				Tuple2<Example, Integer> output = new Tuple2<>(word, one.get());
+//				state.update(one.get());
+//				return output;
+//			}
+//		};
+//
+//		JavaMapWithStateDStream<Example, Integer, Integer, Tuple2<Example, Integer>> stateDstream =
+//		        predictions.mapWithState(StateSpec.function(mappingFunc));
+//		
+//		
+//		stateDstream.stateSnapshots().print();
+		predictions.count().print();
 		
-		
-		stateDstream.stateSnapshots().print();
-		stateDstream.count().print();
 		// stateDstream.repartition(1);
 		//stateDstream.stateSnapshots().repartition(1).dstream().saveAsTextFiles("/tmp/services/output", "");
 		
