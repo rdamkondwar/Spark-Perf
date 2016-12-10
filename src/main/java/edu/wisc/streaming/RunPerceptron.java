@@ -113,7 +113,6 @@ public class RunPerceptron {
 					public Tuple2<Example, Integer> call(String s) {
 						Example e = ListOfExamples.parseExampleFromString(s, testExamplesSet);
 						int output = perceptron.runExample(e);
-						e.predictedOutput = output;
 						return new Tuple2<>(e, output);
 					}
 		});
