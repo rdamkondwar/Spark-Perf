@@ -7,15 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function3;
 import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.State;
-import org.apache.spark.streaming.StateSpec;
 import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaMapWithStateDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -53,7 +48,7 @@ public class RunPerceptron {
 		kafkaParams.put("metadata.broker.list", brokers);
 		
 		kafkaParams.put("auto.offset.reset", "smallest");
-		
+		kafkaParams.put(topics, "5");
 
         Integer NUM_OF_FEATURES = 20;
         
