@@ -8,8 +8,8 @@ public class RandomWordGenerator implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private char [] dataSrc = new char[26];
     private Random r = new Random(System.currentTimeMillis());
-    private int MAX_LEN = 100;
-    private int MAX_IDX  = 26;
+    private int MAX_LEN = 5;
+    private int MAX_IDX  = 5;
     
     public RandomWordGenerator() {
         char start = 'a';

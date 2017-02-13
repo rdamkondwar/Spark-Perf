@@ -47,7 +47,7 @@ public class RandomWordReceiver extends Receiver<String> {
 		} 
 		catch (Exception e) {
 			// Try sleeping and then retrying...
-			Thread.sleep(100);
+			Thread.sleep(10);
 		}
 		
 		restart("Restarting after a small sleep");
