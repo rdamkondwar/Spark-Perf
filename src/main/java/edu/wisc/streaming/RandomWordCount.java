@@ -25,7 +25,7 @@ public final class RandomWordCount implements Serializable {
 	public static void main(String[] args) throws Exception {
 
 		if (args.length < 1) {
-			System.err.println("Usage: RandomWordCount <batchDuration>");
+			System.err.println("Usage: RandomWordCount <batchDuration> <paralellism>");
 			System.exit(1);
 		}
 
@@ -38,12 +38,14 @@ public final class RandomWordCount implements Serializable {
 		jssc.checkpoint("/tmp/checkpoint");
 
 		JavaDStream<String> messages = jssc.receiverStream(new RandomWordReceiver());
-		
+
 		Integer parallelizeIndex = Integer.parseInt(args[1]);
 		
 		if (null != parallelizeIndex && parallelizeIndex > 0) {
 		    messages.repartition(parallelizeIndex);
 		}
+
+		//messages.print();
 
 		JavaPairDStream<String, Integer> wordCounts = messages.mapToPair(new PairFunction<String, String, Integer>() {
 			@Override
@@ -63,7 +65,7 @@ public final class RandomWordCount implements Serializable {
 				int sum = one.orElse(0) + (state.exists() ? state.get() : 0);
 				Tuple2<String, Integer> output = new Tuple2<>(word, sum);
 				state.update(sum);
-				
+				System.out.println("Rohitsd_log: " + word);
 				return output;
 			}
 		};
@@ -73,9 +75,12 @@ public final class RandomWordCount implements Serializable {
 		
 		// wordCounts.count();
 
-		// wordCounts.print();
-		//stateDstream.
+		//wordCounts.count().print();
+		//wordCounts.dstream().print();
+		
 		stateDstream.count().print();
+		//stateDstream.dstream().print();
+		//stateDstream.stateSnapshots().dstream().print();
 
 		// Start the computation
 		jssc.start();
